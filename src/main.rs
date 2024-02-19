@@ -1,4 +1,4 @@
-use cae::{exif::parse, to_fracs_ii, to_fracu_ii, to_u32_ii};
+use cae::{exif::{parse, ExifInfo}, to_fracs_ii, to_fracu_ii, to_u32_ii};
 use fltk::{
     app,
     frame::Frame,
@@ -9,6 +9,10 @@ use fltk::{
 use std::{collections::HashMap, fs::File, io::Read};
 fn main() {
     let mut data = File::open("1.JPG").unwrap();
+    ExifInfo::get(data);
+    /* 
+    let mut data = File::open("1.JPG").unwrap();
+    /* */
     let mut dat = vec![];
     data.read_to_end(&mut dat).unwrap();
     let app = app::App::default();
@@ -18,12 +22,13 @@ fn main() {
     image.scale(6000, 6000, true, true);
     frame.set_image(Some(image));
     frame.center_of(&wind);
-
+    
     wind.make_resizable(true);
     wind.end();
     wind.show();
-
+    
     app.run().unwrap();
+    */
     /*
     //let mut dat = data.bytes();
     let y = parse(data);
@@ -75,6 +80,7 @@ fn main() {
     */
     */
 }
+/*
 fn get_exif(data: File) {
     let dict: HashMap<u32, String> = HashMap::new();
     let list = parse(data);
@@ -110,3 +116,4 @@ fn get_exif(data: File) {
         println!("]");
     }
 }
+*/

@@ -1,5 +1,5 @@
 use crate::{to_u32_ii, Frac};
-use std::{fs::File, io::Read};
+use std::{collections::HashMap, fs::File, io::Read};
 //#[derive(Debug)]
 pub struct Directory {
     tag: u32,
@@ -27,26 +27,52 @@ pub struct ExifInfo {
     exposure_time: Frac,         //快门速度 0x829A
     f_number: Frac,              //光圈大小 0x829D
     offset_time: String,         //零时区时差 0x9011
-    iso: u32,
+    iso: u32,                      //0x8827
     focal_length: Frac,          //焦距 0x920A
     metering_mode: u32,          //测光模式 0x9207
                         /*
                             1 = Monochrome area
-                        2 = One-chip color area
-                        3 = Two-chip color area
-                        4 = Three-chip color area
-                        5 = Color sequential area
-                        6 = Monochrome linear
-                        7 = Trilinear
-                        8 = Color sequential linear
-                             */
+                            2 = One-chip color area
+                            3 = Two-chip color area
+                            4 = Three-chip color area
+                            5 = Color sequential area
+                            6 = Monochrome linear
+                            7 = Trilinear
+                            8 = Color sequential linear
+                        */
     exif_image_width:u32, //0xA002
     exif_image_height:u32, //0xA003
     color_space:u32,        //色彩空间 0xA001
     lens_model:String, //镜头模型0xA434
 }
-pub fn parse(mut file: File) -> Vec<Directory> {
-    let mut list: Vec<Directory> = Vec::new();
+impl ExifInfo {
+    pub fn get(file:File){
+        let map = parse(file);
+        let make_1 = map.get(&0x10F).unwrap();
+        let make_2 = map.get(&0x110).unwrap();
+        let date_time = map.get(&0x9003).unwrap();
+        let exposure_compensation = map.get(&0x9204).unwrap();
+        let exposure_time = map.get(&0x829A).unwrap();
+        let f_number = map.get(&0x829D).unwrap();
+        let offset_time = map.get(&0x9011).unwrap();
+        let iso = map.get(&0x8827).unwrap();
+        let focal_length = map.get(&0x920A).unwrap();
+        let metering_mode = map.get(&0x9207).unwrap();
+        let exif_image_width = map.get(&0xA002).unwrap();
+        let exif_image_height = map.get(&0xA003).unwrap();
+        let color_space = map.get(&0xA001).unwrap();
+        let lens_model = map.get(&0xA434).unwrap();
+
+        let mut vecc = vec![];
+        vecc = make_1.val.clone();
+        vecc.pop();
+        let make_1 = String::from_utf8(vecc).unwrap();
+        print!("{}",make_1);
+
+    }
+}
+pub fn parse(mut file: File) -> HashMap<u32,Directory> {
+    let mut map :HashMap<u32,Directory>= HashMap::new();
     let mut data = vec![];
     file.read_to_end(&mut data).unwrap();
     //let mut s = sta_it.skip(22);
@@ -101,11 +127,12 @@ pub fn parse(mut file: File) -> Vec<Directory> {
                 nxt = to_u32_ii(&vals);
             }
             let dy = Directory::new(tags, valtyps, valnums, vals);
-            list.push(dy);
+            //list.push(dy);
+            map.insert(dy.tag, dy);
         }
         cnt = nxt as usize + 12;
     }
-    list
+    map
 }
 fn find_data(data: &Vec<u8>, ops: u32, num: u32) -> Vec<u8> {
     let mut val = Vec::new();
