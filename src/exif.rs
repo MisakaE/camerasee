@@ -1,4 +1,4 @@
-use crate::{to_u32_ii, Frac};
+use crate::{to_fracs_ii, to_fracu_ii, to_u32_ii, Frac};
 use std::{collections::HashMap, fs::File, io::Read};
 //#[derive(Debug)]
 pub struct Directory {
@@ -21,32 +21,32 @@ impl Directory {
     }
 }
 pub struct ExifInfo {
-    make: String,                //相机信息 0x10F 0x110
-    date_time: String,           //拍摄日期 0x9003
-    exposure_compensation: Frac, //曝光补偿 0x9204
-    exposure_time: Frac,         //快门速度 0x829A
-    f_number: Frac,              //光圈大小 0x829D
-    offset_time: String,         //零时区时差 0x9011
-    iso: u32,                      //0x8827
-    focal_length: Frac,          //焦距 0x920A
-    metering_mode: u32,          //测光模式 0x9207
-                        /*
-                            1 = Monochrome area
-                            2 = One-chip color area
-                            3 = Two-chip color area
-                            4 = Three-chip color area
-                            5 = Color sequential area
-                            6 = Monochrome linear
-                            7 = Trilinear
-                            8 = Color sequential linear
-                        */
-    exif_image_width:u32, //0xA002
-    exif_image_height:u32, //0xA003
-    color_space:u32,        //色彩空间 0xA001
-    lens_model:String, //镜头模型0xA434
+    pub make: String,                //相机信息 0x10F 0x110
+    pub date_time: String,           //拍摄日期 0x9003
+    pub exposure_compensation: Frac, //曝光补偿 0x9204
+    pub exposure_time: Frac,         //快门速度 0x829A
+    pub f_number: Frac,              //光圈大小 0x829D
+    pub offset_time: String,         //零时区时差 0x9011
+    pub iso: u32,                    //0x8827
+    pub focal_length: Frac,          //焦距 0x920A
+    pub metering_mode: u32,          //测光模式 0x9207
+    /*
+        1 = Monochrome area
+        2 = One-chip color area
+        3 = Two-chip color area
+        4 = Three-chip color area
+        5 = Color sequential area
+        6 = Monochrome linear
+        7 = Trilinear
+        8 = Color sequential linear
+    */
+    pub exif_image_width: u32,  //0xA002
+    pub exif_image_height: u32, //0xA003
+    pub color_space: u32,       //色彩空间 0xA001
+    pub lens_model: String,     //镜头模型0xA434
 }
 impl ExifInfo {
-    pub fn get(file:File){
+    pub fn get(file: File) ->ExifInfo{
         let map = parse(file);
         let make_1 = map.get(&0x10F).unwrap();
         let make_2 = map.get(&0x110).unwrap();
@@ -63,16 +63,57 @@ impl ExifInfo {
         let color_space = map.get(&0xA001).unwrap();
         let lens_model = map.get(&0xA434).unwrap();
 
-        let mut vecc = vec![];
-        vecc = make_1.val.clone();
+        let mut vecc = make_1.val.clone();
         vecc.pop();
         let make_1 = String::from_utf8(vecc).unwrap();
-        print!("{}",make_1);
 
+        let mut vecc = make_2.val.clone();
+        vecc.pop();
+        let make_2 = String::from_utf8(vecc).unwrap();
+
+        let make = format!("{} {}", make_1, make_2);
+
+        let mut vecc = date_time.val.clone();
+        vecc.pop();
+        let date_time = String::from_utf8(vecc).unwrap();
+
+        let mut vecc = offset_time.val.clone();
+        vecc.pop();
+        let offset_time = String::from_utf8(vecc).unwrap();
+
+        let mut vecc = lens_model.val.clone();
+        vecc.pop();
+        let lens_model = String::from_utf8(vecc).unwrap();
+
+        let exposure_compensation = to_fracs_ii(&exposure_compensation.val);
+        let exposure_time = to_fracu_ii(&exposure_time.val);
+        let f_number = to_fracu_ii(&f_number.val);
+        let iso = to_u32_ii(&iso.val);
+        let focal_length = to_fracu_ii(&focal_length.val);
+        let metering_mode = to_u32_ii(&metering_mode.val);
+        let exif_image_width = to_u32_ii(&exif_image_width.val);
+        let exif_image_height = to_u32_ii(&exif_image_height.val);
+        let color_space = to_u32_ii(&color_space.val);
+
+        ExifInfo {
+            make: make,
+            date_time: date_time,
+            exposure_compensation:exposure_compensation,
+            exposure_time: exposure_time,
+            f_number: f_number,
+            offset_time: offset_time,
+            iso: iso,
+            focal_length: focal_length,
+            metering_mode: metering_mode,
+            exif_image_width: exif_image_width,
+            exif_image_height: exif_image_height,
+            color_space: color_space,
+            lens_model: lens_model,
+        }
     }
 }
-pub fn parse(mut file: File) -> HashMap<u32,Directory> {
-    let mut map :HashMap<u32,Directory>= HashMap::new();
+pub fn parse(mut file: File) -> HashMap<u32, Directory> {
+    let mut map: HashMap<u32, Directory> = HashMap::new();
     let mut data = vec![];
     file.read_to_end(&mut data).unwrap();
     //let mut s = sta_it.skip(22);

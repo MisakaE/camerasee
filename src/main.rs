@@ -9,7 +9,15 @@ use fltk::{
 use std::{collections::HashMap, fs::File, io::Read};
 fn main() {
     let mut data = File::open("1.JPG").unwrap();
-    ExifInfo::get(data);
+    let y = ExifInfo::get(data);
+    println!("{}",y.date_time);
+    println!("{}/{}",y.focal_length.get().2,y.focal_length.get().1);
+    println!("{:#?}",y.f_number.get());
+    println!("{}",y.date_time);
+    println!("{}",y.date_time);
+    println!("{}",y.date_time);
+    println!("{}",y.date_time);
+
     /* 
     let mut data = File::open("1.JPG").unwrap();
     /* */
