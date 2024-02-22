@@ -17,6 +17,14 @@ impl Frac {
         }
         (self.num as f32)/(self.deon as f32)*(sign as f32)
     }
+    pub fn to_string(&self)-> String{
+        if self.sign{
+            format!("-{}/{}",self.num,self.deon)
+        } else {
+            format!("{}/{}",self.num,self.deon)
+        }
+        
+    }
 }
 pub fn to_fracs_ii(hex: &Vec<u8>)->Frac{
     let mut sign = false;
@@ -57,11 +65,5 @@ pub fn to_i32_ii(hex: &Vec<u8>) -> i32{
     }
     to_u32_ii(&hex) as i32
 
-}
-pub struct MetaData{
-    date:String,
-    size:u32,
-    h:u32,
-    w:u32,
 }
 pub mod exif;

@@ -8,16 +8,10 @@ use fltk::{
 };
 use std::{collections::HashMap, fs::File, io::Read};
 fn main() {
-    let mut data = File::open("1.JPG").unwrap();
+    let data = File::open("1.JPG").unwrap();
     let y = ExifInfo::get(data);
-    println!("{}",y.date_time);
-    println!("{}/{}",y.focal_length.get().2,y.focal_length.get().1);
-    println!("{:#?}",y.f_number.get());
-    println!("{}",y.date_time);
-    println!("{}",y.date_time);
-    println!("{}",y.date_time);
-    println!("{}",y.date_time);
-
+    println!("{}",y.make.unwrap());
+    println!("{}",y.exposure_compensation.unwrap().to_float());
     /* 
     let mut data = File::open("1.JPG").unwrap();
     /* */
@@ -88,40 +82,3 @@ fn main() {
     */
     */
 }
-/*
-fn get_exif(data: File) {
-    let dict: HashMap<u32, String> = HashMap::new();
-    let list = parse(data);
-    for i in list {
-        let val = String::new();
-
-        
-        if i.get().1 == 2 {
-            let mut ve = i.get().3;
-            ve.pop();
-            let st = String::from_utf8(ve).unwrap();
-            print!(" {} ", st)
-        } else if i.get().1 == 5 && i.get().2 == 1 {
-            let fr = to_fracu_ii(&i.get().3);
-            print!("{}/{}", fr.get().2, fr.get().1);
-        } else if i.get().1 == 4 && i.get().2 == 1 {
-            let fr = to_u32_ii(&i.get().3);
-            print!("{}", fr);
-        } else if i.get().1 == 10 && i.get().2 == 1 {
-            let fr = to_fracs_ii(&i.get().3);
-            if fr.get().0 {
-                print!("-");
-            }
-            print!("{}/{}", fr.get().2, fr.get().1);
-        } else if i.get().1 == 3 {
-            print!("{}", to_u32_ii(&i.get().3));
-        } else {
-            for j in i.get().3 {
-                print!("{:02X} ", j);
-            }
-        }
-
-        println!("]");
-    }
-}
-*/
