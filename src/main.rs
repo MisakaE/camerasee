@@ -1,4 +1,4 @@
-use cae::{exif::{parse, ExifInfo}, to_fracs_ii, to_fracu_ii, to_u32_ii};
+use cae::{exif::{parse, ExifInfo}, to_fracs_ii, to_fracu_ii, to_u32_ii, ui};
 use fltk::{
     app,
     frame::Frame,
@@ -8,10 +8,13 @@ use fltk::{
 };
 use std::{collections::HashMap, fs::File, io::Read};
 fn main() {
+    /*
     let data = File::open("1.JPG").unwrap();
     let y = ExifInfo::get(data);
     println!("{}",y.make.unwrap());
     println!("{}",y.exposure_compensation.unwrap().to_float());
+    */
+    ui::mainpage::body();
     /* 
     let mut data = File::open("1.JPG").unwrap();
     /* */

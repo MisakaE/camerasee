@@ -67,3 +67,4 @@ pub fn to_i32_ii(hex: &Vec<u8>) -> i32{
 
 }
 pub mod exif;
+pub mod ui;
