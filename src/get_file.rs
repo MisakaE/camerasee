@@ -1,8 +1,12 @@
 use std::fs::{self, File};
 use std::env;
 use std::io::Error;
+
+use regex::Regex;
+
 use crate::exif::ExifInfo;
 use std::path::Path;
+#[derive(Clone)]
 pub struct FileInfo{
     pub path:String,
     pub exif:ExifInfo,
@@ -13,6 +17,18 @@ pub fn get_all(current_path:String) -> (Vec<FileInfo>,Vec<String>){
     let mut list_path:Vec<String>=Vec::new();
     for entry in fs::read_dir(current_path).expect("get dir err!"){
         let entry = entry.unwrap();
+        //[\.][A-Z]*[a-z]*$
+        let re = Regex::new(r"[\.][A-Z]*[a-z]*$").unwrap();
+        let path_str = entry.path().display().to_string();
+        let pat = re.find(&path_str);
+        if pat.is_none(){
+            continue;
+        }
+        match pat.unwrap().as_str() {
+            ".JPG"|".jpg"|".JPEG"|".jpeg" => (),
+            _ => continue
+        }
+
         let file = File::open(entry.path()).unwrap();
         let lens = fs::metadata(entry.path()).unwrap().len();
         let exif_info = ExifInfo::get(file);

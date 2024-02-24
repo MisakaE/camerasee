@@ -20,6 +20,7 @@ impl Directory {
         (self.tag, self.valtyp, self.valnum, self.val.clone())
     }
 }
+#[derive(Clone)]
 pub struct ExifInfo {
     pub make: Option<String>,                //相机信息 0x10F 0x110
     pub date_time: Option<String>,           //拍摄日期 0x9003

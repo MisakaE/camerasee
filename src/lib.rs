@@ -1,8 +1,10 @@
+#[derive(Clone)]
 pub struct Frac {
     sign: bool,
     num: u32,
     deon: u32,
 }
+
 impl Frac {
     pub fn new(signs: bool, nums: u32, denos: u32) -> Frac {
         Frac {
