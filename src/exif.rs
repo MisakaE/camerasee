@@ -151,19 +151,19 @@ impl ExifInfo {
         
 
         ExifInfo {
-            make: make,
-            date_time: date_time,
-            exposure_compensation:exposure_compensation,
-            exposure_time: exposure_time,
-            f_number: f_number,
-            offset_time: offset_time,
-            iso: iso,
-            focal_length: focal_length,
-            metering_mode: metering_mode,
-            exif_image_width: exif_image_width,
-            exif_image_height: exif_image_height,
-            color_space: color_space,
-            lens_model: lens_model,
+            make,
+            date_time,
+            exposure_compensation,
+            exposure_time,
+            f_number,
+            offset_time,
+            iso,
+            focal_length,
+            metering_mode,
+            exif_image_width,
+            exif_image_height,
+            color_space,
+            lens_model,
         }
     }
 }

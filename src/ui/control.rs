@@ -40,7 +40,7 @@ pub fn direction(sen_move: Sender<(i32, i32, i32)>) {
                 .expect("sen_move send error!");
         }
         //}
-        sleep(0.05);
+        sleep(0.02);
     });
 }
 pub fn lists(

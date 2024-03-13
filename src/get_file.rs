@@ -12,6 +12,7 @@ pub struct FileInfo{
     pub exif:ExifInfo,
     pub len:u64,
 }
+
 pub fn get_all(current_path:String) -> (Vec<FileInfo>,Vec<String>){
     let mut list :Vec<FileInfo>= Vec::new();
     let mut list_path:Vec<String>=Vec::new();

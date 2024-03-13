@@ -1,7 +1,7 @@
-use std::sync::{mpsc::channel, Arc, Mutex};
+use std::{sync::{mpsc::channel, Arc, Mutex}, thread};
 
 use fltk::{
-    app, enums::Color, frame::Frame, image::JpegImage, prelude::{GroupExt, ImageExt, WidgetBase, WidgetExt}, window::Window
+    app::{self, awake, sleep}, enums::Color, frame::Frame, image::JpegImage, prelude::{GroupExt, ImageExt, WidgetBase, WidgetExt}, window::Window
 };
 
 //use super::control::{self, lists};
@@ -14,6 +14,7 @@ pub fn body(all: (Vec<FileInfo>, Vec<String>)) {
     
     let mut wind = Window::new(500, 500, 500, 500, None);
     wind.set_color(Color::from_hex(0x000000));
+
     //let mut image_fr = Frame::default();
     let image_fr = Arc::new(Mutex::new(Frame::default()));
     let image_bo = Arc::new(Mutex::new(JpegImage::load(all.1[0].clone()).unwrap()));
@@ -37,8 +38,8 @@ pub fn body(all: (Vec<FileInfo>, Vec<String>)) {
         true,
         true,
     );
-    
-    locked_image_fr.set_image(Some(locked_image_bo.clone()));
+    let mut ys = wind.clone();
+    //locked_image_fr.set_image(Some(locked_image_bo.clone()));
     locked_image_fr.set_pos(wind.w()/2, wind.w()/2);
     {
         sen_menu.send((false,all.0.get(0).unwrap().clone())).unwrap();
